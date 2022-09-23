@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
     private Rigidbody rigid;
     [SerializeField] float force = 10;
+    [SerializeField] float damageGuage = 20f;
 
     private void Awake()
     {
@@ -22,5 +23,23 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void UpgradeDamageGuage(float value)
+    {
+        damageGuage = value;
+    }
+
+    void OnTriggerEnter(Collider other) 
+    {
+        LivingEntity attackTarget = other.GetComponent<LivingEntity>();
+        if(attackTarget != null)
+        {
+            Vector3 hitpos = other.ClosestPoint(transform.position);
+            Vector3 hitnor = other.transform.position;
+
+            attackTarget.Damage(damageGuage, hitpos, hitnor);
+            Destroy(gameObject);
+        }
     }
 }

@@ -16,7 +16,7 @@ public class LivingEntity : MonoBehaviour,IDamagable
         health = maxHP;
     }
 
-    public virtual void Damage(float value)
+    public virtual void Damage(float value,Vector3 hitPoint,Vector3 hitNormal)
     {
         if (health <= 0)
             return;
@@ -28,13 +28,15 @@ public class LivingEntity : MonoBehaviour,IDamagable
         }
     }
 
-    protected virtual void Die()
+    public virtual void Die()
     {
         if(onDeath != null)
         {
             onDeath();
         }
         dead = true;
+        StartCoroutine("DeadEffect");
+        
     }
 
     public virtual void RestoreHealth(float value)
@@ -45,5 +47,11 @@ public class LivingEntity : MonoBehaviour,IDamagable
         }
 
         health += value;
+    }
+
+    private IEnumerator DeadEffect()
+    {
+        yield return new WaitForSeconds(3.0f);
+        gameObject.SetActive(false);
     }
 }

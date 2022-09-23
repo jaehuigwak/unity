@@ -15,7 +15,7 @@ public class PlayerHealth : LivingEntity
     private PlayerMovement playerMove;
     private PlayerShooter playerShot;
 
-    private int cnt = 0;
+    private Renderer[] playerRenderer;
 
     void Awake()
     {
@@ -24,6 +24,8 @@ public class PlayerHealth : LivingEntity
 
         playerMove = GetComponent<PlayerMovement>();
         playerShot = GetComponent<PlayerShooter>();
+
+        playerRenderer = GetComponentsInChildren<Renderer>();
     }
 
     // Start is called before the first frame update
@@ -51,18 +53,19 @@ public class PlayerHealth : LivingEntity
         base.RestoreHealth(value);
     }
 
-    public override void Damage(float value)
+    public override void Damage(float value,Vector3 hitPoint,Vector3 hitNormal)
     {
         if(!dead)//사망하지 않은 경우
         {
             audioPlayer.PlayOneShot(hitClip);
-            DamageEffect();
+            StartCoroutine("DamageEffect");
         }
 
-        base.Damage(value);
+        base.Damage(value,hitPoint,hitNormal);
+        UIManager.uInstance.setPlayerHp(health);
     }
 
-    protected override void Die()
+    public override void Die()
     {
         base.Die();
 
@@ -88,12 +91,19 @@ public class PlayerHealth : LivingEntity
 
     private IEnumerator DamageEffect()
     {
-        while(cnt<3)
+        for (int i = 0; i < playerRenderer.Length; i++)
         {
-            gameObject.SetActive(false);
-            yield return new WaitForSeconds(.2f);
-            gameObject.SetActive(true);
+            playerRenderer[i].material.color = Color.gray;
         }
+
+        yield return new WaitForSeconds(.05f);
+
+        for (int i = 0; i < playerRenderer.Length; i++)
+        {
+            playerRenderer[i].material.color = Color.white;
+        }
+
     }
+
 
 }

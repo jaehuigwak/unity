@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ TODO
+add ray cast hit 
+ */
+
+
 public class Gun : MonoBehaviour
 {
     public enum State
