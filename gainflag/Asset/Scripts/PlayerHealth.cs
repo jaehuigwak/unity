@@ -63,6 +63,7 @@ public class PlayerHealth : LivingEntity
 
         base.Damage(value,hitPoint,hitNormal);
         UIManager.uInstance.setPlayerHp(health);
+        Debug.Log("player health : " + health);
     }
 
     public override void Die()
