@@ -5,7 +5,7 @@ using System;
 
 public class LivingEntity : MonoBehaviour,IDamagable
 {
-    [SerializeField] float maxHP = 100.0f;
+    protected float maxHP = 100.0f;
     public float health { get; private set; }
     public bool dead { get; private set; }
     public event Action onDeath;
@@ -35,23 +35,28 @@ public class LivingEntity : MonoBehaviour,IDamagable
             onDeath();
         }
         dead = true;
-        StartCoroutine("DeadEffect");
+        //StartCoroutine("DeadEffect");
         
     }
 
     public virtual void RestoreHealth(float value)
     {
-        if(dead)
+        if(dead || health >= maxHP)
         {
             return;
         }
 
         health += value;
+        if(health>=maxHP)
+        {
+            health = maxHP;
+        }
+
     }
 
-    private IEnumerator DeadEffect()
+/*    private IEnumerator DeadEffect()
     {
         yield return new WaitForSeconds(3.0f);
         gameObject.SetActive(false);
-    }
+    }*/
 }

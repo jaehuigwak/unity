@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 /*
  TODO
-correct enemy damage effect error 
+correct SetUp method.. -> EnemySpawner
  */
 
 
@@ -201,5 +201,13 @@ public class Enemy : LivingEntity
             }
         }
 
+    }
+
+    public void SetUp(float hp,float hitDamage,float sp)
+    {
+        maxHP = hp;
+        UIManager.uInstance.setEnemyMaxHp(maxHP);
+        damage = hitDamage;
+        pathFinder.speed = sp;
     }
 }

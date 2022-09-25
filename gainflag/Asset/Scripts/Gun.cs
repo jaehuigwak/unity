@@ -4,7 +4,7 @@ using UnityEngine;
 
 /*
  TODO
-add ray cast hit 
+
  */
 
 
@@ -33,7 +33,7 @@ public class Gun : MonoBehaviour
     [SerializeField] int magCapacity = 10; //탄창 용량
     private int currentRemain; //현재 탄창 용량이 남은 탄알
 
-    [SerializeField] float timeBetFire = .12f; //발사 간격
+    [SerializeField] float timeBetFire = .2f; //발사 간격
     [SerializeField] float reloadTime = 1.8f; //재장전 소요시간
     private float lastFireTime;
 
@@ -45,6 +45,8 @@ public class Gun : MonoBehaviour
         ShootPoint = GameObject.Find("ShootPoint");
         shotEffect=ShootPoint.GetComponent<Light>();
         audioPlayer = GetComponent<AudioSource>();
+
+        UIManager.uInstance.setRemainAmmoText(totalRemain);
     }
 
     private void OnEnable()
@@ -73,6 +75,7 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(.05f);
         shotEffect.enabled = false;
     }
+
     public void Fire()
     {
         if(state==State.Ready && Time.timeSinceLevelLoad>=lastFireTime+timeBetFire)
@@ -116,5 +119,39 @@ public class Gun : MonoBehaviour
                 state = State.Empty;
             }
         }
+    }
+
+    public void Reload()
+    {
+        Debug.Log("Gun Reload");
+        if(state==State.Reload || totalRemain<=0 || currentRemain>=magCapacity )
+        {
+            //이미 재장전 중인 경우, 남은 탄알이 없는 경우, 탄알이 이미 가득 찬 경우
+            return;
+        }
+        StartCoroutine("ReloadRoutine");
+        StartCoroutine(UIManager.uInstance.ValidShotTimer(reloadTime));
+    }
+
+    private IEnumerator ReloadRoutine()
+    {
+        state = State.Reload;
+        UIManager.uInstance.ShotButtonInvalidEffect();
+
+        int fillCnt = magCapacity - currentRemain;
+
+        if (totalRemain < fillCnt) // 남은 탄알보다 채워야할 탄알이 많은 경우
+        {
+            fillCnt = totalRemain;
+        }
+
+        currentRemain += fillCnt;
+        totalRemain -= fillCnt;
+        UIManager.uInstance.setRemainAmmoText(totalRemain);
+
+        yield return new WaitForSeconds(reloadTime);
+
+        state = State.Ready;
+        UIManager.uInstance.ShotButtonValidEffect();
     }
 }

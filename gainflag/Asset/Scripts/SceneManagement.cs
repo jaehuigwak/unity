@@ -9,4 +9,13 @@ public class SceneManagement : MonoBehaviour
     {
         SceneManager.LoadScene(num);
     }
+
+    public void GameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        //init gamemanager values
+        GameManager.gInstance.enabled = false;
+        GameManager.gInstance.enabled = true;
+    }
 }
