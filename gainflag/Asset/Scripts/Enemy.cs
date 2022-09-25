@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 /*
  TODO
-correct enemy damage effect error 
+correct SetUp method.. -> EnemySpawner
  */
 
 
@@ -18,7 +18,7 @@ public class Enemy : LivingEntity
     private Animator enemyAnimator;
     private AudioSource enemyAudioPlayer;
 
-    [SerializeField] ParticleSystem hitEffect;
+    //[SerializeField] ParticleSystem hitEffect;
     [SerializeField] AudioClip deathSound;
     [SerializeField] AudioClip attackSound;
     [SerializeField] AudioClip hitSound;
@@ -71,7 +71,7 @@ public class Enemy : LivingEntity
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("enemy health :" + health);
+        //Debug.Log("enemy health :" + health);
     }
 
     // Update is called once per frame
@@ -117,12 +117,13 @@ public class Enemy : LivingEntity
     {
         if (!dead)
         {
-            hitEffect.transform.position = hitPoint;
-            hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+            //hitEffect.transform.position = hitPoint;
+            //hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
 
-            Debug.Log(health);
-            hitEffect.Play();
+            Debug.Log("Enemy health : "+health);
+            //hitEffect.Play();
             enemyAudioPlayer.PlayOneShot(hitSound);
+            enemyAnimator.SetTrigger("GetHit");
         }
 
         base.Damage(value,hitPoint,hitNormal);
@@ -200,5 +201,13 @@ public class Enemy : LivingEntity
             }
         }
 
+    }
+
+    public void SetUp(float hp,float hitDamage,float sp)
+    {
+        maxHP = hp;
+        UIManager.uInstance.setEnemyMaxHp(maxHP);
+        damage = hitDamage;
+        pathFinder.speed = sp;
     }
 }

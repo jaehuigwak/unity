@@ -29,6 +29,10 @@ public class PlayerShooter : MonoBehaviour
             {
                 gun.Fire();
             }
+            if(input.reload)
+            {
+                gun.Reload();
+            }
         }
     }
 }

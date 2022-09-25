@@ -8,6 +8,8 @@ public class Bullet : MonoBehaviour
     [SerializeField] float force = 10;
     [SerializeField] float damageGuage = 20f;
 
+    [SerializeField] ParticleSystem Explosion;
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -30,6 +32,7 @@ public class Bullet : MonoBehaviour
         damageGuage = value;
     }
 
+    /*
     void OnTriggerEnter(Collider other) 
     {
         LivingEntity attackTarget = other.GetComponent<LivingEntity>();
@@ -42,4 +45,33 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    */
+
+    void OnCollisionEnter(Collision other)
+    {
+        ExplosionEffect();
+
+        LivingEntity attackTarget = other.collider.GetComponent<LivingEntity>();
+        if (attackTarget != null)
+        {
+            Vector3 hitpos = other.collider.ClosestPoint(transform.position);
+            Vector3 hitnor = other.collider.transform.position;
+
+            Debug.Log("bullet on collision enter");
+            attackTarget.Damage(damageGuage, hitpos, hitnor);
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void ExplosionEffect()
+    {
+        Instantiate(Explosion, transform.position, transform.rotation);
+    }
+
+    public void SetBulletForward(Vector3 target)
+    {
+        rigid.AddForce(target.normalized * force, ForceMode.Impulse);
+    }
+
 }

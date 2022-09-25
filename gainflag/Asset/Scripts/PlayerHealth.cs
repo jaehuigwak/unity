@@ -17,6 +17,8 @@ public class PlayerHealth : LivingEntity
 
     private Renderer[] playerRenderer;
 
+    private PlayerInput input;
+
     void Awake()
     {
         audioPlayer = GetComponent<AudioSource>();
@@ -26,6 +28,7 @@ public class PlayerHealth : LivingEntity
         playerShot = GetComponent<PlayerShooter>();
 
         playerRenderer = GetComponentsInChildren<Renderer>();
+        input = GetComponent<PlayerInput>();
     }
 
     // Start is called before the first frame update
@@ -37,7 +40,13 @@ public class PlayerHealth : LivingEntity
     // Update is called once per frame
     void Update()
     {
-        
+        if(input!=null)
+        {
+            if(input.restore)
+            {
+                RestoreHealth(20);
+            }
+        }
     }
 
     protected override void OnEnable()
@@ -51,6 +60,7 @@ public class PlayerHealth : LivingEntity
     public override void RestoreHealth(float value)
     {
         base.RestoreHealth(value);
+        UIManager.uInstance.setPlayerHp(health);
     }
 
     public override void Damage(float value,Vector3 hitPoint,Vector3 hitNormal)
@@ -63,6 +73,7 @@ public class PlayerHealth : LivingEntity
 
         base.Damage(value,hitPoint,hitNormal);
         UIManager.uInstance.setPlayerHp(health);
+        Debug.Log("player health : " + health);
     }
 
     public override void Die()
@@ -74,6 +85,7 @@ public class PlayerHealth : LivingEntity
 
         playerMove.enabled = false;
         playerShot.enabled = false; 
+
     }
 
     private void OnTriggerEnter(Collider other)
